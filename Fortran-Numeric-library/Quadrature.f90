@@ -46,23 +46,23 @@ module Quadratur
         !integrate one-dimensional function F from alpha to beta in N Segments with points c and weights b
         pure function quadrature_integrate(f, alpha, beta, n, b, c) result(intapprox)
             real(real_kind), intent(in) :: alpha, beta              !start and end of the interval
-            real(real_kind) :: intapprox                               !result
-            real(real_kind), dimension(:), intent(in) :: b, c     !weights and points
-            integer, intent(in) :: n                                     !number of Segments in the decomposition of the interval
-            procedure(func) :: f                                        !the function to integrate
+            real(real_kind) :: intapprox                                !result
+            real(real_kind), dimension(:), intent(in) :: b, c    !weights and points
+            integer, intent(in) :: n                                       !number of Segments in the decomposition of the interval
+            procedure(func) :: f                                           !the function to integrate
             real(real_kind) :: h
             h = (beta - alpha) / N
             intapprox = sum(f( (/((i+c)*h+alpha, i=0,N-1)/) )* reshape(spread(b,2,N),(/30/)) * h)
         endfunction
         
-        pure function numint(f, alpha, beta, tol) result(res)
-        use adaptive_gauss_parameter, only : b, c
-            real(real_kind), intent(in) :: alpha, beta
+        !integrate one-dimensional function F from alpha to beta with an adaptive quadrature with a relative error tolerance of tol
+        pure function numint(f, alpha, beta, tol) result(approx)
+        use adaptive_gauss_parameter, only : b, c   !import weights and absicasses of the 15-point Gauss-Legendre quadrature and weights for a 14 and 7 point quadrature with the same absicasses for error approximation
+            real(real_kind), intent(in) :: alpha, beta                                                              !start and end of the interval
             real(real_kind), dimension(:), allocatable :: abs_approx , error, h, left, diff, diff_2
-            real(real_kind), dimension(:,:), allocatable :: values
-            real(real_kind) :: res
-            real(real_kind) :: approx
-            real(real_kind), intent(in) :: tol
+            real(real_kind), dimension(:,:), allocatable :: values                                             !evaluate the function once for all three quadrature rules and save it here
+            real(real_kind) :: approx                                                                                     !result
+            real(real_kind), intent(in) :: tol                                                                            !relative error tolerance
             integer :: maxerror
             procedure(func) :: f
             h = [(beta - alpha)]
@@ -79,7 +79,6 @@ module Quadratur
                 left = [left(:maxerror), left(maxerror) + h(maxerror), left(maxerror + 1:)]
                 goto 666
             endif
-            res = approx
         endfunction
         
 endmodule
