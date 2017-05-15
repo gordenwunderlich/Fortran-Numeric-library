@@ -56,7 +56,7 @@ module Quadratur
         endfunction
         
         !integrate one-dimensional function F from alpha to beta with an adaptive quadrature with a relative error tolerance of tol
-        pure function numint(f, alpha, beta, tol) result(approx)
+        pure function adaptive_integrate(f, alpha, beta, tol) result(approx)
         use adaptive_gauss_parameter, only : b, c   !import weights and absicasses of the 15-point Gauss-Legendre quadrature and weights for a 14 and 7 point quadrature with the same absicasses for error approximation
             real(real_kind), intent(in) :: alpha, beta                                                              !start and end of the interval
             real(real_kind), dimension(:), allocatable :: abs_approx , error, h, left, diff, diff_2
