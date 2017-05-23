@@ -72,7 +72,7 @@ module Quadratur
             abs_approx = sum(abs(values)* spread(b(:,1),2,size(h)) * transpose(spread(h,2,size(c))),1)
             diff = sum(values* spread(b(:,1) - b(:,2),2,size(h)) * transpose(spread(h,2,size(c))),1)
             diff_2 = sum(values* spread(b(:,1) - b(:,3),2,size(h)) * transpose(spread(h,2,size(c))),1)
-            error = (diff / diff_2)**2
+            error =abs(diff) *  (diff / diff_2)**2
             if(sum(error) .ge. tol * sum(abs_approx)) then
                 maxerror = maxloc(error, 1)
                 h = [h(:maxerror - 1), h(maxerror) / 2._8, h(maxerror) / 2._8, h(maxerror + 1:)]
